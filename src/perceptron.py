@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 
 from src.activation_function import ActivationFunction
+from src.update_method import UpdateMethod
 
 
 class Perceptron:
@@ -13,17 +14,25 @@ class Perceptron:
         self._weights = np.zeros(dimension) # TODO: Check +1 for w_0
         self._activation_function = activation_function
 
-    def _epoch(self, learning_rate: Number, data):
-        for d in data:
-            p = self.predict(d.input)
-            dw += learning_rate * (p - d.output) * d.input
-
-    def train(self, learning_rate: Number, data):
-        dw = 0
-        while condition:
-            self._epoch(learning_rate, data)
-
-    def predict(self, input: List[Number]) -> Number:
+    def predict(self, stimuli: List[Number]) -> Number:
         return self._activation_function.evaluate(
-            np.dot(input, self._weights[1:]) - self._weights[0]
+            np.dot([-1]+stimuli, self._weights)
         )
+
+    def train(self,
+              learning_rate: Number,
+              epoch_limit: int,
+              update_method: UpdateMethod,
+              cut_condition: CutCondition,
+              data):
+        for _ in range(epoch_limit):
+            self._epoch(learning_rate, data)
+            if cut_condition.is_finished():
+                # TODO check cost or error function and break
+
+    def _epoch(self,
+               learning_rate: Number,
+               data):
+        for d in data:
+            p = self.predict(d.stimuli)
+            dw = learning_rate * (d.output - p) * np.asarray(d.stimuli)
