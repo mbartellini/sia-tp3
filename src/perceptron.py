@@ -10,7 +10,7 @@ class Perceptron:
     def __init__(self,
                  dimension: int,
                  activation_function: ActivationFunction):
-        self._weights = [0] * dimension
+        self._weights = np.zeros(dimension) # TODO: Check +1 for w_0
         self._activation_function = activation_function
 
     def _epoch(self, learning_rate: Number, data):
