@@ -1,18 +1,29 @@
+from abc import ABC
 from numbers import Number
 from typing import List
 import numpy as np
 
-from src.activation_function import ActivationFunction
+from src.activation_method import ActivationMethod
+from src.error_method import ErrorMethod
+from src.optimization_method import OptimizationMethod
 from src.update_method import UpdateMethod
 
 
-class Perceptron:
+class Perceptron(ABC):
     # TODO
     def __init__(self,
                  dimension: int,
-                 activation_function: ActivationFunction):
+                 activation_method: ActivationMethod,
+                 error_method: ErrorMethod,
+                 learn_rate: float,
+                 epochs: int,
+                 update_method: UpdateMethod,
+                 layer_sizes: List[int],
+                 optimization_method: OptimizationMethod,
+                 initial_weights: Supplier[float]
+                 ):
         self._weights = np.zeros(dimension) # TODO: Check +1 for w_0
-        self._activation_function = activation_function
+        self._activation_function = activation_method
 
     def predict(self, stimuli: List[Number]) -> Number:
         return self._activation_function.evaluate(
