@@ -45,4 +45,5 @@ class LogisticActivationFunction(ActivationMethod):
         return 1 / (1 + math.exp(-2 * self._beta * x))
 
     def d_evaluate(self, x: float) -> float:
-        return 2 * self._beta * self.evaluate(x) * (1 - self.evaluate(x))
+        result = self.evaluate(x)
+        return 2 * self._beta * result * (1 - result)
