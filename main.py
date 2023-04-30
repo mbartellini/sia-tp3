@@ -16,9 +16,9 @@ def main():
     activation_method = StepActivationFunction()
     optimization_method = GradientDescentOptimization()
     perceptron = SimplePerceptron(2, 1000, cut_condition, activation_method, optimization_method)
-    periods = perceptron.train_online(X, y)
+    epochs = perceptron.train_batch(X, y)
 
-    print(periods)
+    print(epochs)
 
     X_test = X
     y_pred = perceptron.predict(X_test)
