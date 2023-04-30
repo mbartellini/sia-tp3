@@ -2,6 +2,7 @@ import numpy as np
 
 from src.activation_method import StepActivationFunction
 from src.cut_condition import AccuracyCutCondition
+from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 from src.update_method import OnlineUpdateMethod
 
@@ -13,7 +14,8 @@ def main():
     update_method = OnlineUpdateMethod()
     cut_condition = AccuracyCutCondition(y.shape[0])
     activation_method = StepActivationFunction()
-    perceptron = SimplePerceptron(2, update_method, cut_condition, activation_method)
+    optimization_method = GradientDescentOptimization()
+    perceptron = SimplePerceptron(2, 1000, update_method, cut_condition, activation_method, optimization_method)
     periods = perceptron.train(X, y)
 
     print(periods)

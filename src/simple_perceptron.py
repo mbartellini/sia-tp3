@@ -5,19 +5,19 @@ from numpy import ndarray
 
 from src.activation_method import ActivationMethod
 from src.cut_condition import CutCondition
+from src.optimization_method import OptimizationMethod
 from src.update_method import UpdateMethod
 
 
 class SimplePerceptron:
-    def __init__(self, dim: int, update_method: UpdateMethod, cut_condition: CutCondition,
-                 activation_method: ActivationMethod, learning_rate: float = 0.1,
-                 periods: int = 1000):
+    def __init__(self, dim: int, periods: int, update_method: UpdateMethod, cut_condition: CutCondition,
+                 activation_method: ActivationMethod, optimization_method: OptimizationMethod):
         self._weights = np.array([random.uniform(-1, 1) for _ in range(dim + 1)])
-        self._learning_rate = learning_rate
         self._periods = periods
         self._update_method = update_method
         self._cut_condition = cut_condition
         self._activation_function = activation_method
+        self._optimization_method = optimization_method
 
     def train(self, data: ndarray[float], answers: ndarray[float]) -> int:
         # Add a 1 for w0
@@ -28,14 +28,15 @@ class SimplePerceptron:
         assert data.shape[1] == self._weights.shape[0]
 
         for period in range(self._periods):
+            # TODO remove this for as it is not efficient
             for i in range(data.shape[0]):
                 row = data[i]
                 h = float(np.dot(row, self._weights))
                 result = self._activation_function.evaluate(h)
-
+                derivative = self._activation_function.d_evaluate(h)
                 error = answers[i] - result
                 self._cut_condition.process_prediction(error)
-                dw = self._learning_rate * error * self._activation_function.d_evaluate(h) * row
+                dw = self._optimization_method.adjust(error, derivative, row)
                 self._weights = self._update_method.process_prediction(self._weights, dw)
 
             self._update_method.process_epoch(self._weights)
