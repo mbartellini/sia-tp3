@@ -3,12 +3,15 @@ import random
 import numpy as np
 from numpy import ndarray
 
+from src.update_method import UpdateMethod
+
 
 class SimplePerceptron:
-    def __init__(self, dim: int, learning_rate: float = 0.1, periods: int = 1000):
+    def __init__(self, dim: int, update_method: UpdateMethod, learning_rate: float = 0.1, periods: int = 1000):
         self._weights = np.array([random.uniform(-1, 1) for _ in range(dim + 1)])
         self._learning_rate = learning_rate
         self._periods = periods
+        self._update_method = update_method
 
     def train(self, data: ndarray[float], answers: ndarray[float]):
         # Add a 1 for w0
@@ -31,7 +34,10 @@ class SimplePerceptron:
                 if result == answers[i]:
                     correct += 1
 
-                self._weights += self._learning_rate * (answers[i] - result) * row
+                dw = self._learning_rate * (answers[i] - result) * row
+                self._update_method.process_prediction(self._weights, dw)
+
+            self._update_method.process_epoch(self._weights)
 
             if correct == len(answers):
                 break
