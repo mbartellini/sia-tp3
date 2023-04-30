@@ -16,7 +16,7 @@ class SimplePerceptron:
         self._update_method = update_method
         self._cut_condition = cut_condition
 
-    def train(self, data: ndarray[float], answers: ndarray[float]):
+    def train(self, data: ndarray[float], answers: ndarray[float]) -> int:
         # Add a 1 for w0
         data = np.insert(data, 0, 1, axis=1)
 
@@ -24,7 +24,7 @@ class SimplePerceptron:
         assert data.shape[0] == answers.shape[0]
         assert data.shape[1] == self._weights.shape[0]
 
-        for _ in range(self._periods):
+        for period in range(self._periods):
             for i in range(data.shape[0]):
                 row = data[i]
                 h = np.dot(row, self._weights)
@@ -41,7 +41,9 @@ class SimplePerceptron:
             self._update_method.process_epoch(self._weights)
 
             if self._cut_condition.is_finished():
-                break
+                return period
+
+        return self._periods
 
     def predict(self, data: ndarray[float]):
         # Add a 1 for w0

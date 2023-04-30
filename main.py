@@ -12,7 +12,9 @@ def main():
     update_method = OnlineUpdateMethod()
     cut_condition = AccuracyCutCondition(y.shape[0])
     perceptron = SimplePerceptron(2, update_method, cut_condition)
-    perceptron.train(X, y)
+    periods = perceptron.train(X, y)
+
+    print(periods)
 
     X_test = X
     y_pred = perceptron.predict(X_test)
