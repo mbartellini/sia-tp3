@@ -35,7 +35,7 @@ class SimplePerceptron:
 
                 error = answers[i] - result
                 self._cut_condition.process_prediction(error)
-                dw = self._learning_rate * error * row
+                dw = self._learning_rate * error * self._activation_function.d_evaluate(h) * row
                 self._weights = self._update_method.process_prediction(self._weights, dw)
 
             self._update_method.process_epoch(self._weights)
