@@ -1,31 +1,48 @@
+import math
 from abc import ABC
 
 
 class ActivationMethod(ABC):
-    @staticmethod
-    def evaluate(x: float) -> float:
+    def evaluate(self, x: float) -> float:
         raise NotImplementedError()
 
-    @staticmethod
-    def d_evaluate(x: float) -> float:
+    def d_evaluate(self, x: float) -> float:
         raise NotImplementedError()
 
 
 class StepActivationFunction(ActivationMethod):
-    @staticmethod
-    def evaluate(x: float) -> float:
+    def evaluate(self, x: float) -> float:
         return 1 if x >= 0 else -1
 
-    @staticmethod
-    def d_evaluate(x: float) -> float:
+    def d_evaluate(self, x: float) -> float:
         return 1
 
 
 class IdentityActivationFunction(ActivationMethod):
-    @staticmethod
-    def evaluate(x: float) -> float:
+    def evaluate(self, x: float) -> float:
         return x
 
-    @staticmethod
-    def d_evaluate(x: float) -> float:
+    def d_evaluate(self, x: float) -> float:
         return 1
+
+
+class TangentActivationFunction(ActivationMethod):
+    def __init__(self, beta: float):
+        self._beta = beta
+
+    def evaluate(self, x: float) -> float:
+        return math.tanh(self._beta * x)
+
+    def d_evaluate(self, x: float) -> float:
+        return self._beta * (1 - self.evaluate(x) ** 2)
+
+
+class LogisticActivationFunction(ActivationMethod):
+    def __init__(self, beta: float):
+        self._beta = beta
+
+    def evaluate(self, x: float) -> float:
+        return 1 / (1 + math.exp(-2 * self._beta * x))
+
+    def d_evaluate(self, x: float) -> float:
+        return 2 * self._beta * self.evaluate(x) * (1 - self.evaluate(x))
