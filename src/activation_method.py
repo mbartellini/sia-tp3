@@ -19,3 +19,13 @@ class StepActivationFunction(ActivationMethod):
     @staticmethod
     def d_evaluate(x: float) -> float:
         return 1
+
+
+class IdentityActivationFunction(ActivationMethod):
+    @staticmethod
+    def evaluate(x: float) -> float:
+        return x
+
+    @staticmethod
+    def d_evaluate(x: float) -> float:
+        return 1
