@@ -12,5 +12,5 @@ class OptimizationMethod(ABC):
 
 
 class GradientDescentOptimization(OptimizationMethod):
-    def adjust(self, error: float, derivative: float, row: ndarray[float]) -> ndarray[float]:
+    def adjust(self, error: float, derivative: ndarray[float], row: ndarray[float]) -> ndarray[float]:
         return self._learning_rate * error * derivative * row

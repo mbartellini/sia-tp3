@@ -12,11 +12,11 @@ def main():
     y = np.array([-1, -1, -1, 1])
 
     update_method = OnlineUpdateMethod()
-    cut_condition = AccuracyCutCondition(y.shape[0])
+    cut_condition = AccuracyCutCondition()
     activation_method = StepActivationFunction()
     optimization_method = GradientDescentOptimization()
-    perceptron = SimplePerceptron(2, 1000, update_method, cut_condition, activation_method, optimization_method)
-    periods = perceptron.train(X, y)
+    perceptron = SimplePerceptron(2, 1000, cut_condition, activation_method, optimization_method)
+    periods = perceptron.train_online(X, y)
 
     print(periods)
 
