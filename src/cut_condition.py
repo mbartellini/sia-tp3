@@ -1,3 +1,4 @@
+import math
 from abc import ABC
 
 
@@ -30,7 +31,7 @@ class AbsoluteValueCutCondition(CutCondition):
         self._errors = 0
 
     def process_prediction(self, error: float):
-        self._errors += error
+        self._errors += math.fabs(error)
 
     def is_finished(self) -> bool:
         result = self._errors == 0
