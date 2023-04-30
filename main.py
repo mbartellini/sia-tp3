@@ -1,13 +1,17 @@
 import numpy as np
 
+from src.cut_condition import AccuracyCutCondition
 from src.simple_perceptron import SimplePerceptron
+from src.update_method import OnlineUpdateMethod
 
 
 def main():
     X = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
-    y = np.array([1, 1, -1, -1])
+    y = np.array([-1, -1, -1, 1])
 
-    perceptron = SimplePerceptron(2)
+    update_method = OnlineUpdateMethod()
+    cut_condition = AccuracyCutCondition(y.shape[0])
+    perceptron = SimplePerceptron(2, update_method, cut_condition)
     perceptron.train(X, y)
 
     X_test = X
