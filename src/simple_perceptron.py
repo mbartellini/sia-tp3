@@ -3,18 +3,21 @@ import random
 import numpy as np
 from numpy import ndarray
 
+from src.activation_method import ActivationMethod
 from src.cut_condition import CutCondition
 from src.update_method import UpdateMethod
 
 
 class SimplePerceptron:
-    def __init__(self, dim: int, update_method: UpdateMethod, cut_condition: CutCondition, learning_rate: float = 0.1,
+    def __init__(self, dim: int, update_method: UpdateMethod, cut_condition: CutCondition,
+                 activation_method: ActivationMethod, learning_rate: float = 0.1,
                  periods: int = 1000):
         self._weights = np.array([random.uniform(-1, 1) for _ in range(dim + 1)])
         self._learning_rate = learning_rate
         self._periods = periods
         self._update_method = update_method
         self._cut_condition = cut_condition
+        self._activation_function = activation_method
 
     def train(self, data: ndarray[float], answers: ndarray[float]) -> int:
         # Add a 1 for w0
@@ -27,11 +30,8 @@ class SimplePerceptron:
         for period in range(self._periods):
             for i in range(data.shape[0]):
                 row = data[i]
-                h = np.dot(row, self._weights)
-                if h >= 0:
-                    result = 1
-                else:
-                    result = -1
+                h = float(np.dot(row, self._weights))
+                result = self._activation_function.evaluate(h)
 
                 error = answers[i] - result
                 self._cut_condition.process_prediction(error)
@@ -51,8 +51,6 @@ class SimplePerceptron:
         rows_count = data.shape[0]
         answers = np.zeros(rows_count)
         for i in range(rows_count):
-            if np.dot(data[i], self._weights) >= 0:
-                answers[i] = 1
-            else:
-                answers[i] = -1
+            h = float(np.dot(data[i], self._weights))
+            answers[i] = self._activation_function.evaluate(h)
         return answers
