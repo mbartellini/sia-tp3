@@ -4,14 +4,12 @@ from src.activation_method import StepActivationFunction
 from src.cut_condition import AccuracyCutCondition
 from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
-from src.update_method import OnlineUpdateMethod
 
 
 def main():
     X = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
     y = np.array([-1, -1, -1, 1])
 
-    update_method = OnlineUpdateMethod()
     cut_condition = AccuracyCutCondition()
     activation_method = StepActivationFunction()
     optimization_method = GradientDescentOptimization()

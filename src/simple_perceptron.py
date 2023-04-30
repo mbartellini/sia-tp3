@@ -48,10 +48,10 @@ class SimplePerceptron:
 
         for epoch in range(self._epochs):
             h = np.dot(data, self._weights)
-            result = self._activation_function.evaluate(h)
-            derivative = self._activation_function.d_evaluate(h)
-            errors = answers - result
-            self._weights += self._optimization_method.adjust(errors, derivative, data)
+            results = self._activation_function.evaluate(h)
+            derivatives = self._activation_function.d_evaluate(h)
+            errors = answers - results
+            self._weights += self._optimization_method.adjust(errors, derivatives, data)
 
             if self._cut_condition.is_finished(errors):
                 return epoch
