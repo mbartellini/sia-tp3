@@ -36,26 +36,3 @@ class Perceptron(ABC):
         self._cut_condition = cut_condition
         self._activation_function = activation_method
         self._optimization_method = optimization_method
-
-    # def predict(self, stimuli: List[Number]) -> Number:
-    #     return self._activation_function.evaluate(
-    #         np.dot([-1]+stimuli, self._weights)
-    #     )
-    #
-    # def train(self,
-    #           learning_rate: Number,
-    #           epoch_limit: int,
-    #           update_method: UpdateMethod,
-    #           cut_condition: CutCondition,
-    #           data):
-    #     for _ in range(epoch_limit):
-    #         self._epoch(learning_rate, data)
-    #         if cut_condition.is_finished():
-    #             # TODO check cost or error function and break
-    #
-    # def _epoch(self,
-    #            learning_rate: Number,
-    #            data):
-    #     for d in data:
-    #         p = self.predict(d.stimuli)
-    #         dw = learning_rate * (d.output - p) * np.asarray(d.stimuli)

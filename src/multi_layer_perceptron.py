@@ -58,31 +58,6 @@ class MultiLayerPerceptron(Perceptron):
             # Calculo w = w + dw
 
             for i in range(len(self._layers)):
-                self._layers[i].neurons += delta_W[i]
+                self._layers[i].neurons = np.add(self._layers[i].neurons, delta_W[-(i+1)])
 
-            # delta_W = self._learn_rate * delta_i * feedforward_output[-2] # escalar * (mu * output_size) *  =
-            # delta_W = []
-            # for i in range(len(delta_i)):  # mu
-            #     aux = []
-            #     for neuron in feedforward_output[-2][i]:  # hidden_size
-            #         aux.append(self._learn_rate * delta_i[i] * neuron)
-            #         # lo que esta adentro em deberia quedar de tamaño: hidden_size x output_size
-            #     delta_W.append(aux)
-
-            # Si no fuera batch, delta seria de tamaño output_size
-            # Si no fuera batch, delta_W sería de tamaño output_size x prev_layer_size
-            # Siendo batch, delta es de tamaño mu * output_size
-            # Siendo batch, delta_W es de tamaño
-
-            # Expected = [[...],[...],[...]] mu * output_size
-            # feedforward_output = layer_count * mu * layer_i_size
-            # feedforward_output[-1] = [....] mu * output_size
-
-            # error = y - output   (CHECK)
-            # output_error = error * sigmoid(output_layer_input) * (1 - sigmoid(output_layer_input))    (CHECK)
-            # hidden_error = np.dot(output_error, output_weights.T) * sigmoid(
-            # hidden_layer_input) * (1 - sigmoid(hidden_layer_input))
-            #
-            #     # Actualizamos los pesos utilizando SGD
-            #     output_weights = sgd(output_weights, np.dot(hidden_layer_output.T, output_error), lr)
-            #     hidden_weights = sgd(hidden_weights, np.dot(X.T, hidden_error), lr)
+        return epoch

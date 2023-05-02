@@ -4,7 +4,7 @@ import numpy as np
 from numpy import ndarray
 
 
-class UpdateMethod(ABC):
+class UpdateMethod(ABC):  # TODO: see if remove
     def process_prediction(self, weights: ndarray[float], dw: ndarray[float]):
         raise NotImplementedError()
 
