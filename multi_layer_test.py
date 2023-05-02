@@ -1,11 +1,10 @@
 import numpy as np
 
-from src.activation_method import StepActivationFunction, LogisticActivationFunction, TangentActivationFunction
+from src.activation_method import TangentActivationFunction
 from src.cut_condition import AccuracyCutCondition
 from src.error_method import MeanSquaredErrorMethod
 from src.multi_layer_perceptron import MultiLayerPerceptron
 from src.optimization_method import MomentumOptimization
-from src.simple_perceptron import SimplePerceptron
 
 
 def main():
