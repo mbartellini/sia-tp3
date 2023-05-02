@@ -6,6 +6,17 @@ from src.perceptron import Perceptron
 
 class MultiLayerPerceptron(Perceptron):
 
+    def test(self, data: ndarray[float]) -> ndarray[float]:
+        results = data
+        for i in range(len(self._layers)):
+            results = np.insert(results, 0, 1, axis=1)
+            # results = mu x hidden_size + 1, #layers[i] = (hidden_size + 1) x next_hidden_size
+            h = results @ self._layers[i].neurons
+            # h = mu x next_hidden_size
+            results = self._activation_function.evaluate(h)
+
+        return results
+
     def train_batch(self, initial_data: ndarray[float], expected: ndarray[float]):
         # #initial_data = mu x initial_size, #expected = mu x output_size
 
