@@ -33,12 +33,13 @@ def run_3_a():
     epochs = utils.get_epochs(settings)
     error_method = MeanSquaredErrorMethod()  # Not used for the moment
 
-    perceptron = MultiLayerPerceptron(activation_method, error_method, 0.1, epochs, [2, 3, 2, 1],
+    perceptron = MultiLayerPerceptron(activation_method, error_method, 1, epochs, [2, 3, 2, 1],
                                       optimization_method, cut_condition)
-    print(f"Training finished in {perceptron.train_batch(X, y)} epochs.")
+    print(f"Training finished in {perceptron.train_batch(X, EXPECTED)} epochs.")
 
-    for test in range(len(X)):
-        print(f"{X[test][0]} & {X[test][1]} = {perceptron.test(X[test])}")
+    ans = perceptron.test(X)
+    for test in range(X.shape[0]):
+        print(f"{X[test][0]} & {X[test][1]} = {ans[test]}")
 
 
 if __name__ == "__main__":
