@@ -2,7 +2,7 @@ import numpy as np
 
 from src.activation_method import StepActivationFunction
 from src.cut_condition import AccuracyCutCondition
-from src.optimization_method import GradientDescentOptimization
+from src.optimization_method import MomentumOptimization
 from src.simple_perceptron import SimplePerceptron
 
 
@@ -12,7 +12,7 @@ def main():
 
     cut_condition = AccuracyCutCondition()
     activation_method = StepActivationFunction()
-    optimization_method = GradientDescentOptimization()
+    optimization_method = MomentumOptimization()
     perceptron = SimplePerceptron(2, 1000, cut_condition, activation_method, optimization_method)
     epochs = perceptron.train_batch(X, y)
 

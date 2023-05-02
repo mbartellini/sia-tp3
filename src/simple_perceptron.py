@@ -1,4 +1,4 @@
-import random
+from typing import List
 
 import numpy as np
 from numpy import ndarray
@@ -11,7 +11,7 @@ from src.optimization_method import OptimizationMethod
 class SimplePerceptron:
     def __init__(self, dim: int, epochs: int, cut_condition: CutCondition,
                  activation_method: ActivationMethod, optimization_method: OptimizationMethod):
-        self._weights = np.array([random.uniform(-1, 1) for _ in range(dim + 1)])
+        self._weights = np.array([np.random.uniform(-1, 1) for _ in range(dim + 1)])
         self._epochs = epochs
         self._cut_condition = cut_condition
         self._activation_function = activation_method
@@ -51,10 +51,11 @@ class SimplePerceptron:
             results = self._activation_function.evaluate(h)
             derivatives = self._activation_function.d_evaluate(h)
             errors = answers - results
-            self._weights += self._optimization_method.adjust(errors, derivatives, data)
 
             if self._cut_condition.is_finished(errors):
                 return epoch
+
+            self._weights += self._optimization_method.adjust(errors, derivatives, data)
 
         return self._epochs
 
@@ -66,9 +67,9 @@ class SimplePerceptron:
 
 
 class MLP:
-    def __init__(self, input_size: int, output_size: int, hidden_layers: List[int],
-                 activation_function: ActivationMethod, optimization_method: OptimizationMethod,
-                 cut_condition: CutCondition, epochs: int):
+    def __init__(self, input_size: int, output_size: int, hidden_layers: List[int], epochs: int,
+                 cut_condition: CutCondition, activation_function: ActivationMethod,
+                 optimization_method: OptimizationMethod):
         self._input_size = input_size
         self._output_size = output_size
         self._hidden_layers = hidden_layers
@@ -82,26 +83,27 @@ class MLP:
         self._weights = [np.random.uniform(-1, 1, (sizes[i] + 1, sizes[i + 1])) for i in range(len(sizes) - 1)]
 
     def train_batch(self, data: ndarray[float], answers: ndarray[float]) -> int:
-        # Add a 1 for w0
-        data = np.insert(data, 0, 1, axis=1)
-
         # assert data and answers dimensions are correct
         assert data.shape[0] == answers.shape[0]
-        assert data.shape[1] == self._weights[0].shape[0]
+        assert data.shape[1] == self._weights[0].shape[0] - 1
 
         for epoch in range(self._epochs):
-            activations = [data]
-            h = data
+            # Add a 1 for w0
+            results = np.insert(data, 0, 1, axis=1)
+            feedforward_data = [results]
+            feedforward_output = [data]
 
             # Forward pass
             for i in range(len(self._weights)):
-                h = np.dot(h, self._weights[i])
+                h = np.dot(results, self._weights[i])
+                feedforward_data.append(h)
                 results = self._activation_function.evaluate(h)
-                activations.append(results)
-                h = np.insert(results, 0, 1, axis=1)  # Add bias for next layer
+                feedforward_output.append(results)
+                results = np.insert(results, 0, 1, axis=1)  # Add w0 for next layer
 
-            derivatives = self._activation_function.d_evaluate(h)
-            errors = answers - activations[-1]
+            derivatives = self._activation_function.d_evaluate(feedforward_data[-1])
+            print(answers, feedforward_output[-1])
+            errors = answers - feedforward_output[-1]
             deltas = [errors * derivatives]
 
             # Backward pass

@@ -17,6 +17,7 @@ class StepActivationFunction(ActivationMethod):
         return np.where(x >= 0, 1, -1)
 
     def d_evaluate(self, x: ndarray[float]) -> ndarray[float]:
+        # NOTE: we return ones even if it is not the derivative to be able to generalize the perceptron
         return np.ones_like(x)
 
 
