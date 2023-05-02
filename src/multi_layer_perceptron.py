@@ -19,7 +19,7 @@ class MultiLayerPerceptron(Perceptron):
 
     def train_batch(self, initial_data: ndarray[float], expected: ndarray[float]):
         # #initial_data = mu x initial_size, #expected = mu x output_size
-
+        epoch = 0
         for epoch in range(self._epochs):
             # Feedforward ("predecir") for each layer.
             # Le agrego al initial data los V = 1 para el bias
@@ -30,7 +30,7 @@ class MultiLayerPerceptron(Perceptron):
                 results = np.insert(results, 0, 1, axis=1)
                 feedforward_output.append(results)
                 # results = mu x hidden_size + 1, #layers[i] = (hidden_size + 1) x next_hidden_size
-                h = np.dot(results, self._layers[i].neurons)
+                h = results @ self._layers[i].neurons
                 # h = mu x next_hidden_size
                 feedforward_data.append(h)
                 results = self._activation_function.evaluate(h)
@@ -56,7 +56,7 @@ class MultiLayerPerceptron(Perceptron):
             for i in reversed(range(len(self._layers) - 1)):
                 # delta_w tiene que tener la suma de todos los delta_w para cada iteracion para ese peso
                 #        mu * output_size  *   ((hidden_size + 1 {bias_layer} - 1) * output_size).T
-                error = np.dot(delta_i, np.delete(self._layers[i + 1], 0, axis=0).T)
+                error = delta_i @ np.delete(self._layers[i + 1].neurons, 0, axis=0).T
                 # mu * (hidden_size + 1 {bias_layer} - 1)  == mu * hidden_size
 
                 # Call _optimization_method #
