@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 from numpy import ndarray
 
@@ -31,7 +29,9 @@ class SimplePerceptron:
                 result = self._activation_function.evaluate(h)
                 derivative = self._activation_function.d_evaluate(h)
                 errors[i] = answers[i] - result
-                self._weights += self._optimization_method.adjust(errors[i], derivative, data[i])
+
+                delta = errors[i] * derivative
+                self._weights += self._optimization_method.adjust(delta, data[i])
 
             if self._cut_condition.is_finished(errors):
                 return epoch
@@ -55,7 +55,8 @@ class SimplePerceptron:
             if self._cut_condition.is_finished(errors):
                 return epoch
 
-            self._weights += self._optimization_method.adjust(errors, derivatives, data)
+            delta = errors * derivatives
+            self._weights += self._optimization_method.adjust(delta, data)
 
         return self._epochs
 
