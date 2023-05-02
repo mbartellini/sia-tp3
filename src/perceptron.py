@@ -26,7 +26,7 @@ class Perceptron(ABC):
         # Initialize weights for the whole network with random [1-0] values.
         self._layers = []
         for i in range(len(architecture) - 1):
-            self._layers.append(Layer(np.random.rand(architecture[i], architecture[i+1])))  # TODO: Discuss bias
+            self._layers.append(Layer(np.random.uniform(-1, 1, (architecture[i] + 1, architecture[i+1])))) 
             
         self._update_method = update_method
         self._error_method = error_method
