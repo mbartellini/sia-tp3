@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import ndarray
+from tqdm import tqdm
 
 from src.perceptron import Perceptron
 
@@ -20,7 +21,7 @@ class MultiLayerPerceptron(Perceptron):
     def train_batch(self, initial_data: ndarray[float], expected: ndarray[float]):
         # #initial_data = mu x initial_size, #expected = mu x output_size
         epoch = 0
-        for epoch in range(self._epochs):
+        for epoch in tqdm(range(self._epochs)):
             # Feedforward ("predecir") for each layer.
             # Le agrego al initial data los V = 1 para el bias
             feedforward_data = [initial_data]
