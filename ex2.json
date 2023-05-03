@@ -1,16 +1,17 @@
 {
   "path": "./data.csv",
   "activation_function": {
-    "function": "sigmoid",
-    "beta": 0.8
+    "function": "tangent",
+    "beta": 1
   },
   "optimization_method": {
     "method": "gradient",
-    "learning_rate": 0.1
+    "learning_rate": 0.001
   },
   "cut_condition": {
     "condition": "mse",
     "eps": 0.001
   },
-  "epochs": 500
+  "epochs": 500,
+  "train_ratio": 0.8
 }
