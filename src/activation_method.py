@@ -39,6 +39,9 @@ class TangentActivationFunction(ActivationMethod):
     def d_evaluate(self, x: ndarray[float]) -> ndarray[float]:
         return self._beta * (1 - self.evaluate(x) ** 2)
 
+    def limits(self) -> tuple[float, float]:
+        return -1, 1
+
 
 class SigmoidActivationFunction(ActivationMethod):
     def evaluate(self, x: ndarray[float]) -> ndarray[float]:
@@ -47,6 +50,9 @@ class SigmoidActivationFunction(ActivationMethod):
     def d_evaluate(self, x: ndarray[float]) -> ndarray[float]:
         ans = self.evaluate(x)
         return ans * (1 - ans)
+
+    def limits(self) -> tuple[float, float]:
+        return 0, 1
 
 
 class LogisticActivationFunction(ActivationMethod):
@@ -59,3 +65,6 @@ class LogisticActivationFunction(ActivationMethod):
     def d_evaluate(self, x: ndarray[float]) -> ndarray[float]:
         result = self.evaluate(x)
         return 2 * self._beta * result * (1 - result)
+
+    def limits(self) -> tuple[float, float]:
+        return 0, 1
