@@ -6,14 +6,16 @@ from typing import Callable, List
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction
-from src.cut_condition import FalseCutCondition, AccuracyCutCondition
+from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
+    SigmoidActivationFunction
+from src.cut_condition import FalseCutCondition, AccuracyCutCondition, MSECutCondition
+from src.multi_layer_perceptron import MultiLayerPerceptron
 from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 
 OUTPUT_DIR = "figs/"
-TEST_COUNT = 100
-MAX_EPOCHS = 50
+TEST_COUNT = 5
+MAX_EPOCHS = 50000
 LEARNING_RATE = 0.01
 
 
@@ -96,7 +98,7 @@ class ErrorVsEpochTestPlotter(TestPlotter):
         x = np.arange(mean.shape[0])
 
         ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0, label=label)
-        ax.plot(x, mean, 'o-', linewidth=2)
+        ax.plot(x, mean, '.-', linewidth=2)
 
 
 class MultiErrorVsEpochTestPlotter(ErrorVsEpochTestPlotter):
@@ -247,5 +249,39 @@ def plots_e2():
     )
 
 
+def plots_e3a():
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    X = np.array([
+        [-1, -1],
+        [-1, 1],
+        [1, -1],
+        [1, 1],
+    ])
+    EXPECTED = np.array([
+        [-1],
+        [1],
+        [1],
+        [-1]
+    ])
+    learning_rates = [10, 1, 0.1, 0.01, 0.001]
+    MultiErrorVsEpochTestPlotter("E3a_ML_XOR.png",
+                                 f"MultiLayer[2, 2, 1] XOR: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
+                                 ).plot(
+        (lambda: [MultiLayerPerceptron([2, 2, 1],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(0.5),
+                                       GradientDescentOptimization(lr)).train_batch(X, EXPECTED)
+                  for lr in learning_rates]
+         )
+    )
+
+
 if __name__ == "__main__":
-    plots_e2()
+    plots_e3a()
