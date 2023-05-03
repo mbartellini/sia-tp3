@@ -4,7 +4,7 @@ import sys
 
 from src.cut_condition import CutCondition, AccuracyCutCondition, AbsoluteValueCutCondition, MSECutCondition
 from src.activation_method import ActivationMethod, StepActivationFunction, LogisticActivationFunction, \
-    TangentActivationFunction, IdentityActivationFunction
+    TangentActivationFunction, IdentityActivationFunction, SigmoidActivationFunction
 from src.optimization_method import OptimizationMethod, MomentumOptimization, GradientDescentOptimization
 from numpy import ndarray
 
@@ -33,6 +33,8 @@ def get_activation_function(settings) -> ActivationMethod:
             beta = settings["activation_function"]["beta"]
             return LogisticActivationFunction(beta)
         case "sigmoid":
+            return SigmoidActivationFunction()
+        case "tangent":
             beta = settings["activation_function"]["beta"]
             return TangentActivationFunction(beta)
         case _:
