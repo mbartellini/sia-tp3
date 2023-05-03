@@ -77,3 +77,15 @@ def parse_csv(settings) -> tuple[ndarray, ndarray]:
     inputs = np.array(data[:, :-1])  # All rows, all columns except the last (output)
     outputs = np.array(data[:, -1])  # All rows, last column
     return inputs, outputs
+
+
+def scale(data: ndarray, limits: tuple[float, float]) -> ndarray:
+    scaled = []
+    x_min, x_max = min(data), max(data)
+    for i in range(len(data)):
+        scaled.append((((data[i] - x_min) * (limits[1] - limits[0])) / (x_max - x_min)) + limits[0])
+    return np.array(scaled)
+
+
+def get_train_ratio(settings) -> float:
+    return settings["train_ratio"]
