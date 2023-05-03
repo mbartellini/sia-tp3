@@ -8,53 +8,11 @@ from typing import List, Dict, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.algorithms import BfsAlgorithm, DfsAlgorithm, GreedyAlgorithm, AStarAlgorithm, Algorithm
-from src.fill_zone.heuristics import EccentricityHeuristic, ColorCountHeuristic, CombinationHeuristic, \
-    NodeCountHeuristic
-from src.fill_zone.state import FillZoneGraphState
-from src.heuristics import DummyHeuristic, Heuristic
-from src.result import Result
-from src.search_tree import SearchTree
-from src.state import State
 
 OUTPUT_DIR = "figs/"
 M = 5
 N = 5
 TEST_COUNT = 100
-UNINFORMED_ALGOS = [
-    BfsAlgorithm(),
-    DfsAlgorithm()
-]
-HEURISTICS = [
-    EccentricityHeuristic(),
-    ColorCountHeuristic()
-]
-INFORMED_ALGOS = [
-    GreedyAlgorithm(),
-    AStarAlgorithm()
-]
-
-OPTIMAL_PAIRS = [
-    (BfsAlgorithm(), DummyHeuristic()),
-    (AStarAlgorithm(), EccentricityHeuristic()),
-    (AStarAlgorithm(), ColorCountHeuristic()),
-    (AStarAlgorithm(), CombinationHeuristic())
-]
-NOT_OPTIMAL_PAIRS = [
-    (DfsAlgorithm(), DummyHeuristic()),
-    (AStarAlgorithm(), NodeCountHeuristic()),
-    (GreedyAlgorithm(), EccentricityHeuristic()),
-    (GreedyAlgorithm(), ColorCountHeuristic()),
-    (GreedyAlgorithm(), CombinationHeuristic()),
-    (GreedyAlgorithm(), NodeCountHeuristic()),
-
-]
-MEMORY_ANAL = [
-    (BfsAlgorithm(), DummyHeuristic()),
-    (DfsAlgorithm(), DummyHeuristic()),
-    (AStarAlgorithm(), CombinationHeuristic())
-]
-
 
 def _get_alias(o: object):
     return o.__class__.__name__[:3]
