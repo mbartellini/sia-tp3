@@ -1,12 +1,20 @@
 import json
+import numpy as np
+import sys
 
 from src.cut_condition import CutCondition, AccuracyCutCondition, AbsoluteValueCutCondition, MSECutCondition
-from src.activation_method import ActivationMethod, StepActivationFunction, LogisticActivationFunction,  \
+from src.activation_method import ActivationMethod, StepActivationFunction, LogisticActivationFunction, \
     TangentActivationFunction, IdentityActivationFunction
 from src.optimization_method import OptimizationMethod, MomentumOptimization, GradientDescentOptimization
+from numpy import ndarray
 
 
-def get_settings(path: str):
+def get_settings():
+    if len(sys.argv) < 2:
+        print("Config file argument not found")
+        exit(1)
+
+    path = sys.argv[1]
     with open(path, "r") as f:
         settings = json.load(f)
     if settings is None:
@@ -59,3 +67,11 @@ def get_optimization_method(settings) -> OptimizationMethod:
 
 def get_epochs(settings) -> int:
     return settings["epochs"]
+
+
+def parse_csv(settings) -> tuple[ndarray, ndarray]:
+    path = settings["path"]
+    data = np.loadtxt(path, delimiter=',', skiprows=1)
+    inputs = np.array(data[:, :-1])  # All rows, all columns except the last (output)
+    outputs = np.array(data[:, -1])  # All rows, last column
+    return inputs, outputs
