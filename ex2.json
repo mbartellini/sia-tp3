@@ -1,5 +1,5 @@
 {
-  "path": "./data.csv",
+  "path": "./data/data.csv",
   "activation_function": {
     "function": "tangent",
     "beta": 1
