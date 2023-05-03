@@ -1,9 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
-from src.activation_method import SigmoidActivationFunction, LogisticActivationFunction
+from src.activation_method import LogisticActivationFunction
 from src.cut_condition import AccuracyCutCondition
-from src.error_method import MeanSquaredErrorMethod
 from src.multi_layer_perceptron import MultiLayerPerceptron
 from src.optimization_method import MomentumOptimization
 
@@ -25,15 +24,13 @@ def main():
     cut_condition = AccuracyCutCondition()
     activation_method = LogisticActivationFunction(0.5)
     optimization_method = MomentumOptimization()  # Not used for the moment
-    error_method = MeanSquaredErrorMethod()  # Not used for the moment
-    lr = 0.1
-    perceptron = MultiLayerPerceptron(activation_method, error_method, lr, 2000, [784, 12, 12, 10], optimization_method, cut_condition)
+    perceptron = MultiLayerPerceptron([784, 12, 12, 10], 2000, cut_condition, activation_method, optimization_method)
 
     print("Training progress:")
     epochs = perceptron.train_batch(x_train[:80], y_train[:80])
     print("Training finished.")
 
-    y_pred = perceptron.test(x_test[:10])
+    y_pred = perceptron.predict(x_test[:10])
     print(y_pred)
     print(y_test[:10])
 

@@ -1,16 +1,31 @@
+from typing import List
+
 import numpy as np
 from numpy import ndarray
 from tqdm import tqdm
 
+from src.activation_method import ActivationMethod
+from src.cut_condition import CutCondition
+from src.layer import Layer
+from src.optimization_method import OptimizationMethod
 from src.perceptron import Perceptron
 
 
 class MultiLayerPerceptron(Perceptron):
+    def __init__(self, architecture: List[int], epochs: int, cut_condition: CutCondition,
+                 activation_method: ActivationMethod, optimization_method: OptimizationMethod):
 
-    def test(self, data: ndarray[float]) -> ndarray[float]:
+        super().__init__(epochs, cut_condition, activation_method, optimization_method)
+
+        # Initialize weights for the whole network with random [-1,1] values.
+        self._layers = []
+        for i in range(len(architecture) - 1):
+            self._layers.append(Layer(np.random.uniform(-1, 1, (architecture[i] + 1, architecture[i + 1]))))
+
+    def predict(self, data: ndarray[float]) -> ndarray[float]:
         results = data
         for i in range(len(self._layers)):
-            results = np.insert(results, 0, 1, axis=1)
+            results = np.insert(np.atleast_2d(results), 0, 1, axis=1)
             # results = mu x hidden_size + 1, #layers[i] = (hidden_size + 1) x next_hidden_size
             h = np.dot(results, self._layers[i].neurons)
             # h = mu x next_hidden_size
@@ -18,20 +33,20 @@ class MultiLayerPerceptron(Perceptron):
 
         return results
 
-    def train_batch(self, initial_data: ndarray[float], expected: ndarray[float]):
+    def train_batch(self, data: ndarray[float], expected: ndarray[float]):
         # #initial_data = mu x initial_size, #expected = mu x output_size
         epoch = 0
         for epoch in tqdm(range(self._epochs)):
             # Feedforward ("predecir") for each layer.
             # Le agrego al initial data los V = 1 para el bias
-            feedforward_data = [initial_data]
-            results = initial_data
+            feedforward_data = [data]
+            results = data
             feedforward_output = []
             for i in range(len(self._layers)):
                 results = np.insert(results, 0, 1, axis=1)
                 feedforward_output.append(results)
                 # results = mu x hidden_size + 1, #layers[i] = (hidden_size + 1) x next_hidden_size
-                h = results @ self._layers[i].neurons
+                h = np.dot(results, self._layers[i].neurons)
                 # h = mu x next_hidden_size
                 feedforward_data.append(h)
                 results = self._activation_function.evaluate(h)
