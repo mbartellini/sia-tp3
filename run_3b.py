@@ -10,12 +10,9 @@ from src.multi_layer_perceptron import MultiLayerPerceptron
 def get_numbers(path: str) -> ndarray[float]:
     with open(path, "r") as f:
         list_of_lines = f.read().splitlines()
-        print(list_of_lines)
         list_of_lines_without_spaces = [np.fromstring(line, dtype=int, sep=' ') for line in list_of_lines]
-        print(list_of_lines_without_spaces)
         numbers = np.array(
             list(zip(*(iter(list_of_lines_without_spaces),) * (len(list_of_lines_without_spaces) // 10))))
-        print(numbers)
     return np.array([number.ravel() for number in numbers])
 
 
