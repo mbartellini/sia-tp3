@@ -2,6 +2,7 @@ import sys
 import utils
 import numpy as np
 
+from plot import plots_e1
 from src.simple_perceptron import SimplePerceptron
 from src.activation_method import StepActivationFunction
 from src.error import mse
@@ -37,9 +38,10 @@ def run_1():
         print(f"Results for test 'xor' {index}: {test} -> Expected: {expected[1][index]} "
               f"-> Error: {mse(np.array([test - expected[1][index]]))}")
 
-    print("Ploting...")
+    print("Plotting...")
     utils.animate(weight_history_and, X, expected[0], "and_animation.gif", optimization_method.learning_rate, frame_duration=200, last_frame_duration=2)
     # utils.animate(weight_history_xor, X, expected[1], "xor_animation.gif", optimization_method.learning_rate, frame_duration=10, last_frame_duration=1)
+    plots_e1()
 
 
 if __name__ == "__main__":
