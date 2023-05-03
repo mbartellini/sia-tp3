@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.activation_method import StepActivationFunction
-from src.cut_condition import FalseCutCondition
+from src.cut_condition import FalseCutCondition, AccuracyCutCondition
 from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 
 OUTPUT_DIR = "figs/"
 TEST_COUNT = 100
-MAX_EPOCHS = 50
+MAX_EPOCHS = 10
 LEARNING_RATE = 0.01
 
 
@@ -78,15 +78,9 @@ class ErrorVsEpochTestPlotter(TestPlotter):
         }
 
     def _save_plot(self, data):
-        mean = np.array(data["mean"])
-        std = np.array(data["std"])
-
-        x = np.arange(mean.shape[0])
         # plot
-        self._fig, self._ax = plt.subplots()
-
-        self._ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0)
-        self._ax.plot(x, mean, 'o-', linewidth=2)
+        fig, ax = plt.subplots()
+        self._plot_line(fig, ax, data)
 
         plt.title(self._title)
         plt.xlabel(self._xaxis)
@@ -95,10 +89,52 @@ class ErrorVsEpochTestPlotter(TestPlotter):
 
         plt.savefig(OUTPUT_DIR + self._out_name)
 
-class MultiErrorVsEpochTestPlotter(AveragePostProcessMixin, ErrorVsEpochTestPlotter):
-    def plot(self, tests: List[Callable], ids: List[str]):
-        for test in tests:
-            super().plot(test)
+    def _plot_line(self, fig, ax, data, label=None):
+        mean = np.array(data["mean"])
+        std = np.array(data["std"])
+
+        x = np.arange(mean.shape[0])
+
+        ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0, label=label)
+        ax.plot(x, mean, 'o-', linewidth=2)
+
+
+class MultiErrorVsEpochTestPlotter(ErrorVsEpochTestPlotter):
+    def __init__(self, out_name, title, xaxis, yaxis, label_type, labels):
+        super().__init__(out_name, title, xaxis, yaxis)
+        self._label_type = label_type
+        self._labels = labels
+
+    def _create_data(self):
+        data = {}
+        for label in self._labels:
+            data[label] = []
+        return data
+
+    def _add_data(self, data, new_data):
+        for i, label in enumerate(self._labels):
+            data[label].append(new_data[i])
+
+    def _post_process(self, data):
+        post_data = {}
+        for label in self._labels:
+            post_data[label] = super()._post_process(data[label])
+
+        print(post_data)
+        return post_data
+
+    def _save_plot(self, data):
+        fig, ax = plt.subplots()
+        for label in self._labels:
+            super()._plot_line(fig, ax, data[label], f"{self._label_type} = {label}")
+
+        plt.title(self._title)
+        plt.xlabel(self._xaxis)
+        plt.ylabel(self._yaxis)
+        plt.grid()
+        leg = plt.legend(loc='upper right')
+
+        plt.savefig(OUTPUT_DIR + self._out_name)
 
 
 def plots_e1():
@@ -134,19 +170,22 @@ def plots_e1():
                                  ).train_batch(X, expected[1])[0]
     )
 
-    learning_rates = [100, 10, 1, 0.1, 0.01, 0.001]
+    learning_rates = [10, 5, 1, 0.1, 0.05]
     MultiErrorVsEpochTestPlotter("AND_error_vs_epoch_multiLR.png",
                                  f"AND: test count = {TEST_COUNT}",
                                  "Epoch",
-                                 "Error(MSE)"
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
                                  ).plot(
-        [(lambda: SimplePerceptron(2,
+        (lambda: [SimplePerceptron(2,
                                    MAX_EPOCHS,
                                    FalseCutCondition(),
                                    StepActivationFunction(),
                                    GradientDescentOptimization(lr)
-                                   )
-          ) for lr in learning_rates]
+                                   ).train_batch(X, expected[0])[0]
+                  for lr in learning_rates]
+         )
     )
 
 
@@ -156,4 +195,3 @@ def plots_e2():
 
 if __name__ == "__main__":
     plots_e1()
-
