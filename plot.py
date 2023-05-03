@@ -6,14 +6,14 @@ from typing import Callable, List
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.activation_method import StepActivationFunction
+from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction
 from src.cut_condition import FalseCutCondition, AccuracyCutCondition
 from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 
 OUTPUT_DIR = "figs/"
 TEST_COUNT = 100
-MAX_EPOCHS = 10
+MAX_EPOCHS = 50
 LEARNING_RATE = 0.01
 
 
@@ -190,8 +190,62 @@ def plots_e1():
 
 
 def plots_e2():
-    pass
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    path = "./data/data.csv"
+    data = np.loadtxt(path, delimiter=',', skiprows=1)
+    X = np.array(data[:, :-1])  # All rows, all columns except the last (output)
+    expected = np.array(data[:, -1])  # All rows, last column
+
+    ErrorVsEpochTestPlotter("DATA_IDENTITY_error_vs_epoch.png",
+                            f"LINEAR: Learning rate = {LEARNING_RATE}, test count = {TEST_COUNT}",
+                            "Epoch",
+                            "Error(MSE)"
+                            ).plot(
+        lambda: SimplePerceptron(X[0].size,
+                                 MAX_EPOCHS,
+                                 FalseCutCondition(),
+                                 IdentityActivationFunction(),
+                                 GradientDescentOptimization(LEARNING_RATE)
+                                 ).train_batch(X, expected)[0]
+    )
+
+    learning_rates = [0.1, 0.01, 0.001, 0.0001]
+    MultiErrorVsEpochTestPlotter("EX2_LINEAR_error_vs_epoch_multiLR.png",
+                                 f"LINEAR: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
+                                 ).plot(
+        (lambda: [SimplePerceptron(X[0].size,
+                                   MAX_EPOCHS,
+                                   FalseCutCondition(),
+                                   IdentityActivationFunction(),
+                                   GradientDescentOptimization(lr)
+                                   ).train_batch(X, expected)[0]
+                  for lr in learning_rates]
+         )
+    )
+
+    MultiErrorVsEpochTestPlotter("EX2_NON_LINEAR_error_vs_epoch_multiLR.png",
+                                 f"TANGENT: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
+                                 ).plot(
+        (lambda: [SimplePerceptron(X[0].size,
+                                   MAX_EPOCHS,
+                                   FalseCutCondition(),
+                                   TangentActivationFunction(0.5),
+                                   GradientDescentOptimization(lr)
+                                   ).train_batch(X, expected)[0]
+                  for lr in learning_rates]
+         )
+    )
 
 
 if __name__ == "__main__":
-    plots_e1()
+    plots_e2()
