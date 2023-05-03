@@ -11,5 +11,5 @@
     "method": "gradient",
     "learning_rate": 0.1
   },
-  "epochs": 1000
+  "epochs": 2500
 }
