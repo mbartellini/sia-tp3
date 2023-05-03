@@ -8,12 +8,7 @@ from src.error import mse
 
 
 def run_1():
-    if len(sys.argv) < 2:
-        print("Config file argument not found")
-        exit(1)
-
-    config_path = sys.argv[1]
-    settings = utils.get_settings(config_path)
+    settings = utils.get_settings()
     cut_condition = utils.get_cut_condition(settings)
     optimization_method = utils.get_optimization_method(settings)
     epochs = utils.get_epochs(settings)
