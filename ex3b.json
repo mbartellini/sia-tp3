@@ -11,5 +11,6 @@
     "method": "gradient",
     "learning_rate": 0.1
   },
+  "path": "data/TP3-ej3-digitos.txt",
   "epochs": 500
 }
