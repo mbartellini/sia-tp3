@@ -98,7 +98,7 @@ class ErrorVsEpochTestPlotter(AveragePostProcessMixin, TestPlotter):
         plt.savefig(OUTPUT_DIR + self._out_name)
 
 
-if __name__ == "__main__":
+def plots_e1():
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
@@ -131,3 +131,5 @@ if __name__ == "__main__":
                                  ).train_batch(X, expected[1])[0]
     )
 
+
+def plots_e2():
