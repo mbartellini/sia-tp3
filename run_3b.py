@@ -24,7 +24,7 @@ def run_3_b():
                                       optimization_method)
     print(f"training {train_index} numbers")
 
-    print(f"Training finished in {perceptron.train_batch(X[:train_index, :], EXPECTED[:train_index, :])} epochs.")
+    print(f"Training finished in {len(perceptron.train_batch(X[:train_index, :], EXPECTED[:train_index, :]))} epochs.")
 
     ans = perceptron.predict(X)
     for index, test in enumerate(ans):

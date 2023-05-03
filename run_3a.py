@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 
 import utils
@@ -31,7 +29,7 @@ def run_3_a():
                                       cut_condition,
                                       activation_method,
                                       optimization_method)
-    print(f"Training finished in {perceptron.train_batch(X, EXPECTED)} epochs.")
+    print(f"Training finished in {len(perceptron.train_batch(X, EXPECTED))} epochs.")
 
     ans = perceptron.predict(X)
     for test in range(X.shape[0]):

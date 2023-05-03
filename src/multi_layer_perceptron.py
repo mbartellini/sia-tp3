@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 from src.activation_method import ActivationMethod
 from src.cut_condition import CutCondition
+from src.error import mse
 from src.layer import Layer
 from src.optimization_method import OptimizationMethod
 from src.perceptron import Perceptron
@@ -33,9 +34,9 @@ class MultiLayerPerceptron(Perceptron):
 
         return results
 
-    def train_batch(self, data: ndarray[float], expected: ndarray[float]):
+    def train_batch(self, data: ndarray[float], expected: ndarray[float]) -> list[ndarray[float]]:
         # #initial_data = mu x initial_size, #expected = mu x output_size
-        epoch = 0
+        error_history = []
         for epoch in tqdm(range(self._epochs)):
             # Feedforward ("predecir") for each layer.
             # Le agrego al initial data los V = 1 para el bias
@@ -58,8 +59,9 @@ class MultiLayerPerceptron(Perceptron):
             errors = expected - results  # mu * output_size
             # ver calculo del error con llamando a d_error #
 
+            error_history.append(mse(errors))
             if self._cut_condition.is_finished(errors):
-                return epoch
+                break
 
             derivatives = self._activation_function.d_evaluate(feedforward_data[-1])  # mu * output_size
             delta_i = errors * derivatives  # mu * output_size, elemento a elemento
@@ -87,4 +89,4 @@ class MultiLayerPerceptron(Perceptron):
             for i in range(len(self._layers)):
                 self._layers[i].neurons = np.add(self._layers[i].neurons, delta_W[-(i + 1)])
 
-        return epoch
+        return error_history
