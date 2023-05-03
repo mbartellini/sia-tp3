@@ -89,3 +89,29 @@ def scale(data: ndarray, limits: tuple[float, float]) -> ndarray:
 
 def get_train_ratio(settings) -> float:
     return settings["train_ratio"]
+
+
+def get_numbers(settings) -> ndarray[float]:
+    path = settings["path"]
+    with open(path, "r") as f:
+        list_of_lines = f.read().splitlines()
+        list_of_lines_without_spaces = [np.fromstring(line, dtype=int, sep=' ') for line in list_of_lines]
+        numbers = np.array(
+            list(zip(*(iter(list_of_lines_without_spaces),) * (len(list_of_lines_without_spaces) // 10))))
+    return np.array([number.ravel() for number in numbers])
+
+
+def add_noise(number: ndarray[float], noise) -> ndarray[float]:
+    noisy = []
+    for i in range(len(number)):
+        noisy.append(np.random.normal(loc=number[i], scale=noise))
+    return np.array(noisy)
+
+
+def get_noise(settings) -> float:
+    return settings["noise"]
+
+
+def get_testing_size(settings) -> int:
+    return settings["testing_size"]
+

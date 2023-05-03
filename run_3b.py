@@ -1,19 +1,9 @@
 import sys
 
 import numpy as np
-from numpy import ndarray
 
 import utils
 from src.multi_layer_perceptron import MultiLayerPerceptron
-
-
-def get_numbers(path: str) -> ndarray[float]:
-    with open(path, "r") as f:
-        list_of_lines = f.read().splitlines()
-        list_of_lines_without_spaces = [np.fromstring(line, dtype=int, sep=' ') for line in list_of_lines]
-        numbers = np.array(
-            list(zip(*(iter(list_of_lines_without_spaces),) * (len(list_of_lines_without_spaces) // 10))))
-    return np.array([number.ravel() for number in numbers])
 
 
 def run_3_a():
@@ -23,7 +13,7 @@ def run_3_a():
     optimization_method = utils.get_optimization_method(settings)
     epochs = utils.get_epochs(settings)
 
-    X = get_numbers("data/TP3-ej3-digitos.txt")
+    X = utils.get_numbers(settings)
     EXPECTED = np.array([[1 - 2 * (i % 2)] for i in range(len(X))])
     print(X)
 
