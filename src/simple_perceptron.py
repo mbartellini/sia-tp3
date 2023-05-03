@@ -62,6 +62,6 @@ class SimplePerceptron(Perceptron):
 
     def predict(self, data: ndarray[float]) -> ndarray[float]:
         # Add a 1 for w0
-        data = np.insert(data, 0, 1, axis=1)
+        data = np.insert(np.atleast_2d(data, 0, 1, axis=1))
         h = np.dot(data, self._weights)
         return self._activation_function.evaluate(h)
