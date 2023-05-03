@@ -3,7 +3,6 @@ import sys
 import numpy as np
 
 import utils
-from run_3b import get_numbers
 from src.multi_layer_perceptron import MultiLayerPerceptron
 
 
@@ -14,7 +13,7 @@ def run_3_a():
     optimization_method = utils.get_optimization_method(settings)
     epochs = utils.get_epochs(settings)
 
-    X = get_numbers("data/TP3-ej3-digitos.txt")
+    X = utils.get_numbers(settings)
     EXPECTED = np.array([[int(i == j) for j in range(10)] for i in range(len(X))])
 
     perceptron = MultiLayerPerceptron([X.shape[1], 100, 25, EXPECTED.shape[1]],
@@ -26,9 +25,17 @@ def run_3_a():
 
     np.set_printoptions(suppress=True,
                         formatter={'float_kind': '{:0.3f}'.format})
-    for index, test in enumerate(perceptron.predict(X)):
-        print(f"Results for test {index}: {test} -> {np.argmax(test)}")
-    print([np.argmax(test) for test in perceptron.predict(X)])
+
+    X_test, y_test = [], []  # X now has noise
+    noise = utils.get_noise(settings)
+    for i in range(utils.get_testing_size(settings)):
+        n = np.random.randint(0, 9)
+        X_test.append(utils.add_noise(X[n], noise))
+        y_test.append(n)
+
+    for index, test in enumerate(perceptron.predict(X_test)):
+        if y_test[index] != np.argmax(test):
+            print(f"Mismatch for test {index}: {test} -> Predicted: {np.argmax(test)}, Expected: {y_test[index]}")
 
 
 if __name__ == "__main__":
