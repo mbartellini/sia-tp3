@@ -12,7 +12,7 @@ from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 
 OUTPUT_DIR = "figs/"
-TEST_COUNT = 1
+TEST_COUNT = 100
 MAX_EPOCHS = 50
 LEARNING_RATE = 0.01
 
@@ -45,7 +45,19 @@ class TestPlotter(ABC):
         raise NotImplementedError()
 
 
-class AveragePostProcessMixin:
+class ErrorVsEpochTestPlotter(TestPlotter):
+    def __init__(self, out_name, title, xaxis, yaxis):
+        super().__init__(out_name)
+        self._title = title
+        self._xaxis = xaxis
+        self._yaxis = yaxis
+
+    def _create_data(self):
+        return []
+
+    def _add_data(self, data, new_data):
+        data.append(new_data)
+
     def _post_process(self, data):
         max_size = max([len(history) for history in data])
         mean, std = [], []
@@ -65,30 +77,16 @@ class AveragePostProcessMixin:
             "std": std,
         }
 
-
-class ErrorVsEpochTestPlotter(AveragePostProcessMixin, TestPlotter):
-    def __init__(self, out_name, title, xaxis, yaxis):
-        super().__init__(out_name)
-        self._title = title
-        self._xaxis = xaxis
-        self._yaxis = yaxis
-
-    def _create_data(self):
-        return []
-
-    def _add_data(self, data, new_data):
-        data.append(new_data)
-
     def _save_plot(self, data):
         mean = np.array(data["mean"])
         std = np.array(data["std"])
 
         x = np.arange(mean.shape[0])
         # plot
-        fig, ax = plt.subplots()
+        self._fig, self._ax = plt.subplots()
 
-        ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0)
-        ax.plot(x, mean, 'o-', linewidth=2)
+        self._ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0)
+        self._ax.plot(x, mean, 'o-', linewidth=2)
 
         plt.title(self._title)
         plt.xlabel(self._xaxis)
