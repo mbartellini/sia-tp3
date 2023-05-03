@@ -35,7 +35,7 @@ class SimplePerceptron(Perceptron):
 
                 delta = errors[i] * derivative
                 self._weights += self._optimization_method.adjust(delta, data[i])
-                weight_history.append(self._weights)
+                weight_history.append(np.copy(self._weights))
 
             error_history.append(mse(errors))
             if self._cut_condition.is_finished(errors):
@@ -65,7 +65,7 @@ class SimplePerceptron(Perceptron):
 
             delta = errors * derivatives
             self._weights += self._optimization_method.adjust(delta, data)
-            weight_history.append(self._weights)
+            weight_history.append(np.copy(self._weights))
 
         return error_history, weight_history
 

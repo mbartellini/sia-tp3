@@ -8,6 +8,10 @@ class OptimizationMethod(ABC):
     def __init__(self, learning_rate=0.1):
         self._learning_rate = learning_rate
 
+    @property
+    def learning_rate(self):
+        return self._learning_rate
+
     def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
         raise NotImplementedError()
 
