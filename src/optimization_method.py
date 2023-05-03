@@ -8,12 +8,12 @@ class OptimizationMethod(ABC):
     def __init__(self, learning_rate=0.1):
         self._learning_rate = learning_rate
 
-    def adjust(self, data: ndarray[float], delta: ndarray[float]) -> ndarray[float]:
+    def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
         raise NotImplementedError()
 
 
 class GradientDescentOptimization(OptimizationMethod):
-    def adjust(self, data: ndarray[float], delta: ndarray[float]) -> ndarray[float]:
+    def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
         return self._learning_rate * np.dot(data.T, delta)
 
 
@@ -23,6 +23,6 @@ class MomentumOptimization(OptimizationMethod):
         self._alpha = alpha
         self._prev = 0
 
-    def adjust(self, data: ndarray[float], delta: ndarray[float]) -> ndarray[float]:
+    def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
         self._prev = self._learning_rate * np.dot(data.T, delta) + self._alpha * self._prev
         return self._prev
