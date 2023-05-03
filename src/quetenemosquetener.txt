@@ -59,3 +59,22 @@ Diseño de clases:
         -> d_evaluate(Number)
     - OptimizationMethod(ABC)
         -> adjust()
+
+
+**TO-DO**
+
+*Presentacion*
+
+ejs1:
+- Varios LR para el and, funcion de error
+
+ejs2:
+- Funcion de error para perceptron lineal vs no lineal con varios lr y epochs
+- Capacidad de generalizacion
+
+ejs3:
+- A) Con 2 neuronas hidden grafico de error
+- B) Variar arquitecturas y ver grafico de error (diferentes metodos de opt, uno con momentum el otro sin)
+- C) Variar conjuntos de prueba y ver grafico de error (10 numeros sin ruido, 10 con) (20 numeros, 10 sin ruido y 10 con)
+
+

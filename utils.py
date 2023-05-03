@@ -2,11 +2,19 @@ import json
 import numpy as np
 import sys
 
+from tqdm import tqdm
+
 from src.cut_condition import CutCondition, AccuracyCutCondition, AbsoluteValueCutCondition, MSECutCondition
 from src.activation_method import ActivationMethod, StepActivationFunction, LogisticActivationFunction, \
     TangentActivationFunction, IdentityActivationFunction, SigmoidActivationFunction
 from src.optimization_method import OptimizationMethod, MomentumOptimization, GradientDescentOptimization
 from numpy import ndarray
+
+import matplotlib.pyplot as plt
+from PIL import Image
+
+FRAME_DURATION = 100  # ms
+LAST_FRAME_DURATION = 20  # Frames
 
 
 def get_settings():
@@ -89,3 +97,37 @@ def scale(data: ndarray, limits: tuple[float, float]) -> ndarray:
 
 def get_train_ratio(settings) -> float:
     return settings["train_ratio"]
+
+
+def animate(weights_history, data, expected, name, lr, frame_duration=FRAME_DURATION, last_frame_duration=LAST_FRAME_DURATION):
+    fig, ax = plt.subplots()
+    ax.scatter(data[:, 0], data[:, 1], c=expected)
+
+    line, = ax.plot([], [], lw=2)
+    ax.set_xlim((-1.2, 1.2))
+    ax.set_ylim((-1.2, 1.2))
+
+    ax.set_title(f"Learning Rate: {lr} | Epoch 0")
+
+    # Initialize a list to store each frame of the animation
+    frames = []
+
+    for i in tqdm(range(len(weights_history))):
+        line.set_xdata([-1.2, 1.2])
+        line.set_ydata((-weights_history[i][0] - weights_history[i][1] * np.array([-1.2, 1.2])) / weights_history[i][2])
+
+        ax.set_title(f"Learning Rate: {lr} | Epoch {i}")
+
+        # Draw the current frame and add it to the list of frames
+        fig.canvas.draw()
+        frame = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+        frames.append(frame)
+        plt.close(fig)
+
+    # Duplicate the last frame and append it to the end of the frames list
+    last_frame = frames[-1]
+    for _ in range(last_frame_duration):
+        frames.append(last_frame)
+
+    # Save the frames as a GIF file
+    frames[0].save(name, format='GIF', save_all=True, append_images=frames[1:], duration=frame_duration, loop=0)
