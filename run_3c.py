@@ -1,12 +1,10 @@
-import sys
-
 import numpy as np
 
 import utils
 from src.multi_layer_perceptron import MultiLayerPerceptron
 
 
-def run_3_a():
+def run_3_c():
     settings = utils.get_settings()
     cut_condition = utils.get_cut_condition(settings)
     activation_method = utils.get_activation_function(settings)
@@ -21,7 +19,7 @@ def run_3_a():
                                       cut_condition,
                                       activation_method,
                                       optimization_method)
-    print(f"Training finished in {perceptron.train_batch(X, EXPECTED)} epochs.")
+    print(f"Training finished in {len(perceptron.train_batch(X, EXPECTED))} epochs.")
 
     np.set_printoptions(suppress=True,
                         formatter={'float_kind': '{:0.3f}'.format})
@@ -39,4 +37,4 @@ def run_3_a():
 
 
 if __name__ == "__main__":
-    run_3_a()
+    run_3_c()
