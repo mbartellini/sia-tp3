@@ -1,16 +1,13 @@
 import os.path
 import statistics
-import tracemalloc
-import time
 from abc import ABC
-from numbers import Number
-from typing import List, Dict, Tuple, Callable
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from src.activation_method import StepActivationFunction
-from src.cut_condition import AccuracyCutCondition, FalseCutCondition
+from src.cut_condition import FalseCutCondition
 from src.optimization_method import GradientDescentOptimization
 from src.simple_perceptron import SimplePerceptron
 
@@ -90,7 +87,7 @@ class ErrorVsEpochTestPlotter(AveragePostProcessMixin, TestPlotter):
         # plot
         fig, ax = plt.subplots()
 
-        ax.fill_between(x, mean+std, mean-std, alpha=.5, linewidth=0)
+        ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0)
         ax.plot(x, mean, 'o-', linewidth=2)
 
         plt.title(self._title)
