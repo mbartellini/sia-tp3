@@ -20,12 +20,7 @@ EXPECTED = np.array([
 
 
 def run_3_a():
-    if len(sys.argv) < 2:
-        print("Config file argument not found")
-        exit(1)
-
-    config_path = sys.argv[1]
-    settings = utils.get_settings(config_path)
+    settings = utils.get_settings()
     cut_condition = utils.get_cut_condition(settings)
     activation_method = utils.get_activation_function(settings)
     optimization_method = utils.get_optimization_method(settings)
