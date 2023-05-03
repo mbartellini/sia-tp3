@@ -1,0 +1,11 @@
+{
+  "cut_condition": {
+    "condition": "accuracy",
+    "eps": 0.1
+  },
+  "optimization_method": {
+    "method": "gradient",
+    "learning_rate": 0.01
+  },
+  "epochs": 1000
+}
