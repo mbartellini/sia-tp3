@@ -133,3 +133,9 @@ def plots_e1():
 
 
 def plots_e2():
+    pass
+
+
+if __name__ == "__main__":
+    plots_e2()
+
