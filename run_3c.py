@@ -29,6 +29,10 @@ def run_3_a():
                                       optimization_method)
     print(f"Training finished in {perceptron.train_batch(X, EXPECTED)} epochs.")
 
+    np.set_printoptions(suppress=True,
+                        formatter={'float_kind': '{:0.3f}'.format})
+    for index, test in enumerate(perceptron.predict(X)):
+        print(f"Results for test {index}: {test} -> {np.argmax(test)}")
     print([np.argmax(test) for test in perceptron.predict(X)])
 
 
