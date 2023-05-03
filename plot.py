@@ -1,7 +1,7 @@
 import os.path
 import statistics
 from abc import ABC
-from typing import Callable
+from typing import Callable, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -95,6 +95,11 @@ class ErrorVsEpochTestPlotter(TestPlotter):
 
         plt.savefig(OUTPUT_DIR + self._out_name)
 
+class MultiErrorVsEpochTestPlotter(AveragePostProcessMixin, ErrorVsEpochTestPlotter):
+    def plot(self, tests: List[Callable], ids: List[str]):
+        for test in tests:
+            super().plot(test)
+
 
 def plots_e1():
     if not os.path.exists(OUTPUT_DIR):
@@ -129,11 +134,26 @@ def plots_e1():
                                  ).train_batch(X, expected[1])[0]
     )
 
+    learning_rates = [100, 10, 1, 0.1, 0.01, 0.001]
+    MultiErrorVsEpochTestPlotter("AND_error_vs_epoch_multiLR.png",
+                                 f"AND: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)"
+                                 ).plot(
+        [(lambda: SimplePerceptron(2,
+                                   MAX_EPOCHS,
+                                   FalseCutCondition(),
+                                   StepActivationFunction(),
+                                   GradientDescentOptimization(lr)
+                                   )
+          ) for lr in learning_rates]
+    )
+
 
 def plots_e2():
     pass
 
 
 if __name__ == "__main__":
-    plots_e2()
+    plots_e1()
 
