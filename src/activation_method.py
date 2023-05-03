@@ -40,6 +40,15 @@ class TangentActivationFunction(ActivationMethod):
         return self._beta * (1 - self.evaluate(x) ** 2)
 
 
+class SigmoidActivationFunction(ActivationMethod):
+    def evaluate(self, x: ndarray[float]) -> ndarray[float]:
+        return 1 / (1 + np.exp(-x))
+
+    def d_evaluate(self, x: ndarray[float]) -> ndarray[float]:
+        ans = self.evaluate(x)
+        return ans * (1 - ans)
+
+
 class LogisticActivationFunction(ActivationMethod):
     def __init__(self, beta: float):
         self._beta = beta
