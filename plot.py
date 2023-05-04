@@ -5,23 +5,18 @@ from typing import Callable, List
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 import utils
-from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
-    SigmoidActivationFunction
-from src.cut_condition import FalseCutCondition, AccuracyCutCondition, MSECutCondition
-from src.multi_layer_perceptron import MultiLayerPerceptron
-from src.optimization_method import GradientDescentOptimization
+
 from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
     SigmoidActivationFunction, LogisticActivationFunction
-from src.cut_condition import FalseCutCondition, AccuracyCutCondition
+from src.cut_condition import FalseCutCondition, MSECutCondition
 from src.optimization_method import GradientDescentOptimization, MomentumOptimization
 from src.simple_perceptron import SimplePerceptron
+from src.multi_layer_perceptron import MultiLayerPerceptron
 
 OUTPUT_DIR = "figs/"
 TEST_COUNT = 100
-MAX_EPOCHS = 100
-LEARNING_RATE = 0.01
+MAX_EPOCHS = 1000
 
 
 class TestPlotter(ABC):
@@ -89,7 +84,7 @@ class ErrorVsEpochTestPlotter(TestPlotter):
         fig, ax = plt.subplots()
         self._plot_line(fig, ax, data)
 
-        plt.title(self._title)
+        plt.title(self._title, ontsize=14, bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.5'))
         plt.xlabel(self._xaxis)
         plt.ylabel(self._yaxis)
         plt.grid()
@@ -103,7 +98,7 @@ class ErrorVsEpochTestPlotter(TestPlotter):
         x = np.arange(mean.shape[0])
 
         ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0, label=label)
-        ax.plot(x, mean, 'o-', linewidth=2)
+        ax.plot(x, mean, linewidth=2)
 
 
 class MultiErrorVsEpochTestPlotter(ErrorVsEpochTestPlotter):
@@ -127,7 +122,6 @@ class MultiErrorVsEpochTestPlotter(ErrorVsEpochTestPlotter):
         for label in self._labels:
             post_data[label] = super()._post_process(data[label])
 
-        print(post_data)
         return post_data
 
     def _save_plot(self, data):
@@ -452,9 +446,96 @@ def plots_e3b():
             EXPECTED[:train_index, :]
         )
             for lr in learning_rates]
-         )
-    )
+         ))
+
+
+def plots_e3c():
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    X = utils.get_numbers({"path": "data/TP3-ej3-digitos.txt"})
+    y = np.array([[int(i == j) for j in range(10)] for i in range(len(X))])
+    noises = [0.1 * i for i in range(10)]
+    testing_size = 1000
+
+    # learning_rates = [0.1, 0.01, 0.001, 0.0001]
+    # architectures = [[X.shape[1], 15, y.shape[1]],
+    #                  [X.shape[1], 35, y.shape[1]],
+    #                  [X.shape[1], 35, 15, y.shape[1]],
+    #                  [X.shape[1], 50, 35, y.shape[1]],
+    #                  [X.shape[1], 100, 25, y.shape[1]]]
+
+    # for i in range(len(architectures)):
+    #     MultiErrorVsEpochTestPlotter(f"EX3_C_TRAINING_MULTI_LR_{i}.png",
+    #                                  f"Number recognition: error evolution. Sigmoid. \nArch.: {architectures[i]}. "
+    #                                  f"Test cases: {TEST_COUNT}",
+    #                                  "Epoch",
+    #                                  "Error (MSE)",
+    #                                  "LR",
+    #                                  learning_rates).plot(
+    #         (lambda: [MultiLayerPerceptron(architectures[i],
+    #                                        MAX_EPOCHS,
+    #                                        FalseCutCondition(),
+    #                                        SigmoidActivationFunction(),
+    #                                        GradientDescentOptimization(lr)
+    #                                        ).train_batch(X, y) for lr in learning_rates])
+    #     )
+
+    arch = [X.shape[1], 100, 25, y.shape[1]]
+    # mlp = MultiLayerPerceptron(arch,
+    #                            100000,
+    #                            MSECutCondition(0.0001),
+    #                            SigmoidActivationFunction(),
+    #                            MomentumOptimization(alpha=0.9, learning_rate=0.01, architecture=arch)
+    #                            )
+    # mlp.train_batch(X, y)
+    #
+    # mismatches = [0 for _ in range(len(noises))]
+    # for i in range(len(noises)):
+    #     X_test, y_test = utils.noisy_set(X, noises[i], testing_size)
+    #     for index, test in enumerate(mlp.predict(X_test)):
+    #         if y_test[index] != np.argmax(test):
+    #             mismatches[i] += 1
+    #
+    # mismatches = [(100 * m) / testing_size for m in mismatches]
+    # noises = [str(round(n, 1)) for n in noises]
+    #
+    # fig, ax = plt.subplots()
+    # ax.bar(noises, mismatches, align='center')
+    #
+    # # Add labels to the top of each bar
+    # for i, v in enumerate(mismatches):
+    #     ax.text(i, v + max(mismatches) * 0.01, f"{v:.1f}%", ha='center')
+    #
+    # ax.set_xticks(noises)
+    # ax.set_xlabel('Noises')
+    # ax.set_ylabel('Mismatch Count')
+    # ax.set_title(f'Mismatch Counts for Different Noises. Arch.: [35, 100, 25, 10].\n'
+    #              f'LR: 0.01. Momentum. Alpha: 0.9. Sigmoid. Test cases: 1000')
+    # plt.savefig('figs/EX3C_Generalization.png')
+
+    lrs = [0.3, 0.6, 0.9]
+
+    functions = [TangentActivationFunction(beta=1), SigmoidActivationFunction(),
+                 LogisticActivationFunction(beta=1)]
+    af_labels = ["Tan(1)", "Sig", "Log(1)"]
+
+    for i in range(len(lrs)):
+        MultiErrorVsEpochTestPlotter(f"EX3C_AF_COMPARISON_{i}.png",
+                                     f"Error vs. Epoch for different activation functions\n"
+                                     f"Arch.: {arch}. LR: {lrs[i]}. Gradient. Test cases = {TEST_COUNT}",
+                                     "Epoch",
+                                     "Error (MSE)",
+                                     "AF",
+                                     af_labels).plot(
+            lambda: [MultiLayerPerceptron(arch,
+                                          MAX_EPOCHS,
+                                          FalseCutCondition(),
+                                          af,
+                                          GradientDescentOptimization(lrs[i])
+                                          ).train_batch(X, y) for af in functions]
+        )
 
 
 if __name__ == "__main__":
-    plots_e2()
+    plots_e3c()
