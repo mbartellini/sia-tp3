@@ -27,15 +27,17 @@ class MomentumOptimization(OptimizationMethod):
         self._alpha = alpha
         self._prev = [0]
         if architecture is not None:
-            self._prev = []
+            aux = []
             for i in range(len(architecture) - 1):
-                self._prev.append(np.zeros((architecture[i] + 1, architecture[i + 1])))
-            self._prev = np.flip(self._prev)
+                aux.append(np.zeros((architecture[i] + 1, architecture[i + 1])))
+            self._prev = []
+            for i in reversed(range(len(aux))):
+                self._prev.append(aux[i])
 
         self._index = 0
 
     def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
-        if self._index == len(self._prev):
+        if self._index == len(self._prev):  # Aritmetica modular? No ubico esa calle pa
             self._index = 0
 
         self._prev[self._index] = self._learning_rate * np.dot(data.T, delta) + self._alpha * self._prev[self._index]
