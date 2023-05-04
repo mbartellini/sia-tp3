@@ -18,6 +18,7 @@ from src.simple_perceptron import SimplePerceptron
 OUTPUT_DIR = "figs/"
 TEST_COUNT = 100
 MAX_EPOCHS = 1000
+LEARNING_RATE = 0.01
 
 
 class TestPlotter(ABC):
@@ -519,6 +520,32 @@ def plots_e3a():
                   for lr in learning_rates]
          )
     )
+    MultiErrorVsEpochTestPlotter("E3a_ML_XOR_Arq.png",
+                                 f"MultiLayer XOR: learning rate = {LEARNING_RATE}, test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "Arq",
+                                 ["[2, 2, 1]", "[2, 5, 1]", "[2, 5, 5, 1]"]
+                                 ).plot(
+        (lambda: [MultiLayerPerceptron([2, 2, 1],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(10),
+                                       GradientDescentOptimization(LEARNING_RATE)).train_batch(X, EXPECTED),
+                  MultiLayerPerceptron([2, 5, 1],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(10),
+                                       GradientDescentOptimization(LEARNING_RATE)).train_batch(X, EXPECTED),
+                  MultiLayerPerceptron([2, 5, 5, 1],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(10),
+                                       GradientDescentOptimization(LEARNING_RATE)).train_batch(X, EXPECTED),
+
+                  ]
+         )
+    )
 
 
 def plots_e3b():
@@ -639,4 +666,4 @@ def plots_e3c():
 
 
 if __name__ == "__main__":
-    plots_e3c()
+    plots_e3a()
