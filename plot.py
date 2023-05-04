@@ -1,18 +1,19 @@
 import os.path
 import statistics
 from abc import ABC
-from typing import Callable, List
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
-import utils
 
+import utils
 from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
     SigmoidActivationFunction, LogisticActivationFunction
-from src.cut_condition import FalseCutCondition, MSECutCondition
+from src.cut_condition import FalseCutCondition
+from src.error import mse
+from src.multi_layer_perceptron import MultiLayerPerceptron
 from src.optimization_method import GradientDescentOptimization, MomentumOptimization
 from src.simple_perceptron import SimplePerceptron
-from src.multi_layer_perceptron import MultiLayerPerceptron
 
 OUTPUT_DIR = "figs/"
 TEST_COUNT = 100
@@ -99,6 +100,61 @@ class ErrorVsEpochTestPlotter(TestPlotter):
 
         ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0, label=label)
         ax.plot(x, mean, linewidth=2)
+
+
+class ErrorVsTrainRatioTestPlotter:
+    def __init__(self, out_name, title, xaxis, yaxis):
+        self._out_name = out_name
+        self._title = title
+        self._xaxis = xaxis
+        self._yaxis = yaxis
+
+    def plot(self, test: Callable):
+        data = []
+
+        for i, ratio in enumerate(np.arange(0, 1, 0.05)):
+            data.append([])
+            for t in range(TEST_COUNT):
+                data[i].append(test(ratio))
+
+        data = self._post_process(data)
+
+        self._save_plot(data)
+
+    def _post_process(self, data):
+        mean, std = [], []
+        for data_of_current_ratio in data:
+            mean.append(statistics.mean(data_of_current_ratio))
+            if len(data_of_current_ratio) >= 2:
+                std.append(statistics.stdev(data_of_current_ratio))
+            else:
+                std.append(.0)
+
+        return {
+            "mean": mean,
+            "std": std,
+        }
+
+    def _save_plot(self, data):
+        # plot
+        fig, ax = plt.subplots()
+        self._plot_line(fig, ax, data)
+
+        plt.title(self._title)
+        plt.xlabel(self._xaxis)
+        plt.ylabel(self._yaxis)
+        plt.grid()
+
+        plt.savefig(OUTPUT_DIR + self._out_name)
+
+    def _plot_line(self, fig, ax, data, label=None):
+        mean = np.array(data["mean"])
+        std = np.array(data["std"])
+
+        x = np.arange(0, 1, 0.05)
+
+        ax.fill_between(x, mean + std, mean - std, alpha=.5, linewidth=0, label=label)
+        ax.plot(x, mean, 'o-', linewidth=2)
 
 
 class MultiErrorVsEpochTestPlotter(ErrorVsEpochTestPlotter):
@@ -384,6 +440,51 @@ def plots_e2():
                   for lr in learning_rates]
          )
     )
+
+
+def big_function(data, ratio):
+    np.random.shuffle(data)
+    X = np.array(data[:, :-1])  # All rows, all columns except the last (output)
+    expected = np.array(data[:, -1])  # All rows, last column
+
+    activation_function = LogisticActivationFunction(0.5)
+
+    perceptron = SimplePerceptron(X.shape[1],
+                                  MAX_EPOCHS,
+                                  FalseCutCondition(),
+                                  activation_function,
+                                  MomentumOptimization()
+                                  )
+
+    expected = utils.scale(expected, activation_function.limits())
+
+    train_index = int(ratio * (X.shape[0] - 1)) + 1
+
+    train = X[:train_index, :]
+    train_expected = expected[:train_index]
+    test = X[train_index:, :]
+    test_expected = expected[train_index:]
+
+    perceptron.train_batch(train, train_expected)
+
+    ans = perceptron.predict(test)
+
+    return mse(ans - test_expected)
+
+
+def plots_e2_generalization():
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    path = "./data/data.csv"
+    data = np.loadtxt(path, delimiter=',', skiprows=1)
+
+    ErrorVsTrainRatioTestPlotter("generalization_uniform.png",
+                                 f"Uniform Partitioning: Activacion: Logistic(0.5) \n"
+                                 f"OPT: Momentum; Learning rate = {LEARNING_RATE}; test count = {TEST_COUNT}",
+                                 "Train Ratio",
+                                 "Error(MSE)"
+                                 ).plot(lambda ratio: (big_function(data, ratio)))
 
 
 def plots_e3a():
