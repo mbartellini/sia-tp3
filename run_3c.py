@@ -2,17 +2,20 @@ import numpy as np
 
 import utils
 from src.multi_layer_perceptron import MultiLayerPerceptron
+from src.optimization_method import MomentumOptimization
 
 
 def run_3_c():
     settings = utils.get_settings()
     cut_condition = utils.get_cut_condition(settings)
     activation_method = utils.get_activation_function(settings)
-    optimization_method = utils.get_optimization_method(settings)
+    # optimization_method = utils.get_optimization_method(settings)
     epochs = utils.get_epochs(settings)
 
     X = utils.get_numbers(settings)
     EXPECTED = np.array([[int(i == j) for j in range(10)] for i in range(len(X))])
+    optimization_method = \
+        MomentumOptimization(learning_rate=0.01, alpha=0.9, architecture=[X.shape[1], 100, 25, EXPECTED.shape[1]])
 
     perceptron = MultiLayerPerceptron([X.shape[1], 100, 25, EXPECTED.shape[1]],
                                       epochs,
@@ -24,12 +27,9 @@ def run_3_c():
     np.set_printoptions(suppress=True,
                         formatter={'float_kind': '{:0.3f}'.format})
 
-    X_test, y_test = [], []  # X now has noise
     noise = utils.get_noise(settings)
-    for i in range(utils.get_testing_size(settings)):
-        n = np.random.randint(0, 9)
-        X_test.append(utils.add_noise(X[n], noise))
-        y_test.append(n)
+    ts = utils.get_testing_size(settings)
+    X_test, y_test = utils.noisy_set(X, noise, ts)
 
     for index, test in enumerate(perceptron.predict(X_test)):
         if y_test[index] != np.argmax(test):
