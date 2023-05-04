@@ -1,0 +1,80 @@
+Tenemos que tener:
+
+INPUT / config file:
+- Conjunto de datos de aprendizaje
+- Conjunto de salidas esperadas para esos datos
+- funcion de activacion (escalon, etc) (puede tener parametro)
+    - Parametros de funcion de activacion
+- funcion de error (error cuadratico medio, etc) y su derivada
+- Tasa de aprendizaje (n)
+- EPOCHS (Epocas)
+- Actualizacion de los pesos (batch o online) se corre del estilo perceptron.run_batch()4
+- pesos iniciales (lista de pesos iniciales o supplier)
+- Metodo de optimizacion
+- Arquitectura de la red (#input, #output, #hidden)
+- Tecnica para separar en entrenamiento y testeo
+
+OUTPUT:
+- Dado un conjunto de testeo, un conjunto de soluciones:
+    * Función lógica “O exclusivo” con entradas:
+        x = {{− 1, 1}, {1, − 1}, {− 1, − 1}, {1, 1}}
+    * Salida esperada:
+        y = {1, 1, − 1, − 1}
+
+ALGORITMO:
+- "creo la red neuronal":
+    - inicializo pesos y algo mas?
+    - Predecir la salida de la neurona
+        * Funcion de activacion
+        * Conjunto de salida de todas las neuronas
+        * Conjunto de todos los pesos
+        # Ver si hacemos algo con matrices con toda la entrada o que (batch vs. online)
+    - entreno:
+        - predigo
+        - calcular errores
+        - backpropagation
+        - actualizar peso con funciones facheritas
+    - Vuelvo a empezar prediciendo la salida de la neurona
+
+Diseño de clases:
+    - Perceptron(ABC) -> Mi red neuronal
+        -> __init__(INPUT menos conjunto de datos y datos esperados)
+        -> train(INPUT con OUTPUT esperado)
+        -> test(Conjunto de datos)
+        * MultiLayerPerceptron(Perceptron)
+        * SingleLayerPerceptron(MultiLayerPerceptron)
+    - Layer(): muchas Neuron
+        -> neurons() -> Numpy.Array[Numpy.Array] Arreglo de arreglo de pesos.
+        -> todos los pesos de neurons -> matrix de weights
+
+        ## Funciones de activación (puede ser la misma para todas las neuronas o no) ##
+
+    - Perceptron: muchas Layer
+
+    - ErrorMethod(ABC)
+        -> error(Lista de valores esperados)
+        -> d_error
+    - ActivationMethod(ABC)
+        -> evaluate(Number)
+        -> d_evaluate(Number)
+    - OptimizationMethod(ABC)
+        -> adjust()
+
+
+**TO-DO**
+
+*Presentacion*
+
+ejs1:
+- Varios LR para el and, funcion de error
+
+ejs2:
+- Funcion de error para perceptron lineal vs no lineal con varios lr y epochs
+- Capacidad de generalizacion
+
+ejs3:
+- A) Con 2 neuronas hidden grafico de error
+- B) Variar arquitecturas y ver grafico de error (diferentes metodos de opt, uno con momentum el otro sin)
+- C) Variar conjuntos de prueba y ver grafico de error (10 numeros sin ruido, 10 con) (20 numeros, 10 sin ruido y 10 con)
+
+

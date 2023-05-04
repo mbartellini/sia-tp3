@@ -1,0 +1,17 @@
+{
+  "activation_function": {
+    "function": "sigmoid",
+    "beta": 0.8
+  },
+  "cut_condition": {
+    "condition": "mse",
+    "eps": 0.001
+  },
+  "optimization_method": {
+    "method": "gradient",
+    "learning_rate": 0.1
+  },
+  "path": "data/TP3-ej3-digitos.txt",
+  "epochs": 10000,
+  "train_ratio": 0.8
+}
