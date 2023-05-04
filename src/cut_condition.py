@@ -9,6 +9,11 @@ class CutCondition(ABC):
         raise NotImplementedError()
 
 
+class FalseCutCondition(CutCondition):
+    def is_finished(self, errors: ndarray[float]) -> bool:
+        return False
+
+
 class AccuracyCutCondition(CutCondition):
     def is_finished(self, errors: ndarray[float]) -> bool:
         result = np.count_nonzero(np.logical_not(errors)) == len(errors)
