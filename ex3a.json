@@ -1,7 +1,7 @@
 {
   "activation_function": {
-    "function": "sigmoid",
-    "beta": 0.3
+    "function": "tangent",
+    "beta": 1
   },
   "cut_condition": {
     "condition": "mse",
