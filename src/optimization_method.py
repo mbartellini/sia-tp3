@@ -22,11 +22,22 @@ class GradientDescentOptimization(OptimizationMethod):
 
 
 class MomentumOptimization(OptimizationMethod):
-    def __init__(self, alpha=0.3, learning_rate=0.1):
+    def __init__(self, alpha=0.3, learning_rate=0.1, architecture=None):
         super().__init__(learning_rate)
         self._alpha = alpha
-        self._prev = 0
+        self._prev = [0]
+        if architecture is not None:
+            self._prev = []
+            for i in range(len(architecture) - 1):
+                self._prev.append(np.zeros((architecture[i] + 1, architecture[i + 1])))
+            self._prev = np.flip(self._prev)
+
+        self._index = 0
 
     def adjust(self, delta: ndarray[float], data: ndarray[float]) -> ndarray[float]:
-        self._prev = self._learning_rate * np.dot(data.T, delta) + self._alpha * self._prev
-        return self._prev
+        if self._index == len(self._prev):
+            self._index = 0
+
+        self._prev[self._index] = self._learning_rate * np.dot(data.T, delta) + self._alpha * self._prev[self._index]
+        self._index += 1
+        return self._prev[self._index - 1]
