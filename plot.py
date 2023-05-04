@@ -6,6 +6,12 @@ from typing import Callable, List
 import matplotlib.pyplot as plt
 import numpy as np
 
+import utils
+from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
+    SigmoidActivationFunction
+from src.cut_condition import FalseCutCondition, AccuracyCutCondition, MSECutCondition
+from src.multi_layer_perceptron import MultiLayerPerceptron
+from src.optimization_method import GradientDescentOptimization
 from src.activation_method import StepActivationFunction, IdentityActivationFunction, TangentActivationFunction, \
     SigmoidActivationFunction, LogisticActivationFunction
 from src.cut_condition import FalseCutCondition, AccuracyCutCondition
@@ -310,7 +316,7 @@ def plots_e2():
         (lambda: [SimplePerceptron(X[0].size,
                                    MAX_EPOCHS,
                                    FalseCutCondition(),
-                                   TangentActivationFunction(0.7),
+                                   IdentityActivationFunction(),
                                    GradientDescentOptimization(lr)
                                    ).train_batch(X, expected)[0]
                   for lr in learning_rates]
@@ -382,6 +388,70 @@ def plots_e2():
                                    GradientDescentOptimization(lr)
                                    ).train_batch(X, expected)[0]
                   for lr in learning_rates]
+         )
+    )
+
+
+def plots_e3a():
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    X = np.array([
+        [-1, -1],
+        [-1, 1],
+        [1, -1],
+        [1, 1],
+    ])
+    EXPECTED = np.array([
+        [-1],
+        [1],
+        [1],
+        [-1]
+    ])
+    learning_rates = [10, 1, 0.1, 0.01, 0.001]
+    MultiErrorVsEpochTestPlotter("E3a_ML_XOR.png",
+                                 f"MultiLayer[2, 2, 1] XOR: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
+                                 ).plot(
+        (lambda: [MultiLayerPerceptron([2, 2, 1],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(0.5),
+                                       GradientDescentOptimization(lr)).train_batch(X, EXPECTED)
+                  for lr in learning_rates]
+         )
+    )
+
+
+def plots_e3b():
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    X = utils.get_numbers({"path": "data/TP3-ej3-digitos.txt"})
+    EXPECTED = np.array([[1 - 2 * (i % 2)] for i in range(len(X))])
+    TRAIN_RATIO = 0.8
+    train_index = int(TRAIN_RATIO * (X.shape[0] - 1)) + 1
+
+    learning_rates = [1, 0.1, 0.01, 0.001]
+    MultiErrorVsEpochTestPlotter("E3b_ML_Parity.png",
+                                 f"MultiLayer[{X.shape[1]}, 5, {EXPECTED.shape[1]}] Parity: test count = {TEST_COUNT}",
+                                 "Epoch",
+                                 "Error(MSE)",
+                                 "LR",
+                                 learning_rates
+                                 ).plot(
+        (lambda: [MultiLayerPerceptron([X.shape[1], 5, EXPECTED.shape[1]],
+                                       MAX_EPOCHS,
+                                       FalseCutCondition(),
+                                       TangentActivationFunction(0.5),
+                                       GradientDescentOptimization(lr)).train_batch(
+            X[:train_index, :],
+            EXPECTED[:train_index, :]
+        )
+            for lr in learning_rates]
          )
     )
 
