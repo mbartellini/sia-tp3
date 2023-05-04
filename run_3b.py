@@ -21,7 +21,7 @@ def run_3_b():
                                       epochs,
                                       cut_condition,
                                       activation_method,
-                                      optimization_method)
+                                      MomentumOptimization(utils.get_settings()["optimization_method"]["alpha"], utils.get_settings()["optimization_method"]["learning_rate"], [X.shape[1], 5, EXPECTED.shape[1]]))
     print(f"training {train_index} numbers")
 
     print(f"Training finished in {len(perceptron.train_batch(X[:train_index, :], EXPECTED[:train_index, :]))} epochs.")
