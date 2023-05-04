@@ -156,3 +156,12 @@ def animate(weights_history, data, expected, name, lr, frame_duration=FRAME_DURA
 
     # Save the frames as a GIF file
     frames[0].save(name, format='GIF', save_all=True, append_images=frames[1:], duration=frame_duration, loop=0)
+
+
+def noisy_set(X: ndarray, noise, testing_size) -> tuple[ndarray, ndarray]:
+    X_noisy, y = [], []  # X now has noise
+    for i in range(testing_size):
+        n = np.random.randint(0, 10)
+        X_noisy.append(add_noise(X[n], noise))
+        y.append(n)
+    return np.array(X_noisy), np.array(y)
